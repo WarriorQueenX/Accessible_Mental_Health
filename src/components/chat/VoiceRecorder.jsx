@@ -2,14 +2,18 @@ import React, { useState, useRef } from 'react';
 
 export default function VoiceRecorder({ onRecordingComplete }) {
   const [isRecording, setIsRecording] = useState(false);
-  const [recordings, setRecordings] = useState(() => {
-    const saved = localStorage.getItem('voice_recordings');
-    return saved ? JSON.parse(saved) : [];
-  });
   const [recordingTime, setRecordingTime] = useState(0);
+  const [isSupported, setIsSupported] = useState(true);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerRef = useRef(null);
+
+  // Check browser support
+  React.useEffect(() => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setIsSupported(false);
+    }
+  }, []);
 
   const startRecording = async () => {
     try {
@@ -30,22 +34,21 @@ export default function VoiceRecorder({ onRecordingComplete }) {
         reader.readAsDataURL(audioBlob);
         reader.onloadend = () => {
           const base64Audio = reader.result;
+          // Save to localStorage (simulated database)
+          const recordings = JSON.parse(localStorage.getItem('voice_recordings') || '[]');
           const newRecording = {
             id: Date.now(),
             timestamp: new Date().toISOString(),
             audioData: base64Audio,
             duration: recordingTime
           };
-          // Save to localStorage
-          const updated = [...recordings, newRecording];
-          setRecordings(updated);
-          localStorage.setItem('voice_recordings', JSON.stringify(updated));
+          recordings.push(newRecording);
+          localStorage.setItem('voice_recordings', JSON.stringify(recordings));
           // Notify parent
           if (onRecordingComplete) {
             onRecordingComplete(base64Audio);
           }
         };
-        // Stop all tracks
         stream.getTracks().forEach(track => track.stop());
         setIsRecording(false);
         setRecordingTime(0);
@@ -60,7 +63,7 @@ export default function VoiceRecorder({ onRecordingComplete }) {
       }, 1000);
 
     } catch (error) {
-      console.error('Error accessing microphone:', error);
+      console.error('Microphone error:', error);
       alert('Could not access microphone. Please allow microphone permissions.');
     }
   };
@@ -68,8 +71,6 @@ export default function VoiceRecorder({ onRecordingComplete }) {
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      clearInterval(timerRef.current);
     }
   };
 
@@ -79,16 +80,20 @@ export default function VoiceRecorder({ onRecordingComplete }) {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // Always render the button, even if unsupported (disabled)
   return (
     <div className="flex items-center gap-2">
       <button
         onClick={isRecording ? stopRecording : startRecording}
+        disabled={!isSupported}
         className={`p-3 rounded-full transition-all ${
           isRecording
             ? 'bg-red-500 hover:bg-red-600 animate-pulse text-white'
+            : !isSupported
+            ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
             : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
         }`}
-        title={isRecording ? 'Stop recording' : 'Start recording'}
+        title={!isSupported ? 'Voice recording not supported in this browser' : (isRecording ? 'Stop recording' : 'Start recording')}
       >
         {isRecording ? '⏹️' : '🎙️'}
       </button>

@@ -1,29 +1,91 @@
+// ========== SIGNAL DETECTION ==========
 export const SIGNAL_KEYWORDS = {
-  work_stress: ['boss', 'deadline', 'pressure', 'target', 'shift', 'kaam', 'stress', 'tension', 'manager', 'work'],
-  sleep_problems: ['sleep', 'insomnia', 'tired', 'exhausted', 'night', 'neend', 'thakan', 'jag raha'],
-  loneliness: ['alone', 'lonely', 'nobody', 'no one', 'akela', 'tanha', 'kisi se baat'],
-  anxiety: ['anxious', 'worry', 'fear', 'panic', 'chain', 'dar', 'fear', 'darr', 'darta'],
-  hopelessness: ['hopeless', 'useless', 'nothing', 'pointless', 'ummeed', 'bechain', 'khatam'],
-  social_withdrawal: ['avoid', 'hide', 'isolated', 'social', 'dost', 'baat', 'milna'],
-  financial_stress: ['money', 'loan', 'emi', 'paise', 'problem', 'payment', 'salary', 'financially'],
-  family_conflict: ['family', 'ghar', 'parents', 'wife', 'husband', 'bahu', 'beti'],
-  extreme_thoughts: ['suicide', 'self-harm', 'die', 'kill', 'mar jana', 'khatam kar doon', 'end life'],
+  work_stress: {
+    keywords: ['stress', 'work', 'boss', 'pressure', 'shift', 'tension', 'deadline', 'target', 'manager', 'workload', 'overtime', 'toxic', 'colleague'],
+    emoji: '💼',
+    label: 'Work Stress'
+  },
+  sleep_problems: {
+    keywords: ['sleep', 'neend', 'tired', 'insomnia', 'exhausted', 'thakan', 'raat', 'jag raha', 'restless', 'nightmare', 'fatigue'],
+    emoji: '😴',
+    label: 'Sleep Issues'
+  },
+  loneliness: {
+    keywords: ['alone', 'lonely', 'akela', 'isolated', 'no one', 'tanha', 'kisi se baat', 'left out', 'abandoned', 'disconnected'],
+    emoji: '🫂',
+    label: 'Loneliness'
+  },
+  sadness: {
+    keywords: ['sad', 'depressed', 'cry', 'down', 'low', 'hopeless', 'udaas', 'dukh', 'grief', 'empty', 'worthless', 'meaningless'],
+    emoji: '😔',
+    label: 'Sadness'
+  },
+  anxiety: {
+    keywords: ['anxious', 'worry', 'fear', 'panic', 'scared', 'darr', 'chain', 'ghabrahat', 'overwhelmed', 'restless', 'nervous', 'tense'],
+    emoji: '😰',
+    label: 'Anxiety'
+  },
+  financial_stress: {
+    keywords: ['money', 'paise', 'loan', 'emi', 'payment', 'salary', 'financially', 'bills', 'debt', 'expensive', 'struggle'],
+    emoji: '💰',
+    label: 'Financial Stress'
+  },
+  family_conflict: {
+    keywords: ['family', 'ghar', 'parents', 'wife', 'husband', 'bahu', 'beti', 'betta', 'sasural', 'rishta', 'marriage', 'divorce'],
+    emoji: '👨‍👩‍👧‍👦',
+    label: 'Family Conflict'
+  },
+  burnout: {
+    keywords: ['burnout', 'exhausted', 'drained', 'empty', 'no energy', 'can\'t cope', 'overwhelmed', 'too much'],
+    emoji: '🔥',
+    label: 'Burnout'
+  }
 };
 
-export function extractSignals(message) {
+// ========== EXTRACT SIGNALS ==========
+export function extractSignals(text) {
   const detected = [];
-  const lowerMsg = message.toLowerCase();
-
-  for (const [signal, keywords] of Object.entries(SIGNAL_KEYWORDS)) {
-    if (keywords.some(kw => lowerMsg.includes(kw))) {
-      detected.push(signal);
+  const lower = text.toLowerCase();
+  
+  for (const [signal, data] of Object.entries(SIGNAL_KEYWORDS)) {
+    if (data.keywords.some(kw => lower.includes(kw))) {
+      detected.push({
+        signal,
+        label: data.label,
+        emoji: data.emoji
+      });
     }
   }
+  
   return detected;
 }
 
-export function isCrisis(message) {
-  const crisisKeywords = SIGNAL_KEYWORDS.extreme_thoughts;
-  const lowerMsg = message.toLowerCase();
-  return crisisKeywords.some(kw => lowerMsg.includes(kw));
+// ========== SAVE TO localStorage ==========
+export function saveSignalToStorage(signals) {
+  const existing = JSON.parse(localStorage.getItem('signal_counts') || '{}');
+  signals.forEach(s => {
+    existing[s.signal] = (existing[s.signal] || 0) + 1;
+  });
+  localStorage.setItem('signal_counts', JSON.stringify(existing));
+  window.dispatchEvent(new Event('storage'));
+}
+
+// ========== GET FROM localStorage ==========
+export function getSignalFromStorage() {
+  return JSON.parse(localStorage.getItem('signal_counts') || '{}');
+}
+
+// ========== GET TOTAL SIGNALS ==========
+export function getTotalSignals() {
+  const data = getSignalFromStorage();
+  return Object.values(data).reduce((sum, count) => sum + count, 0);
+}
+
+// ========== GET SIGNAL LABELS ==========
+export function getSignalLabels() {
+  const labels = {};
+  for (const [signal, data] of Object.entries(SIGNAL_KEYWORDS)) {
+    labels[signal] = { label: data.label, emoji: data.emoji };
+  }
+  return labels;
 }
