@@ -9,7 +9,7 @@ export default function ChatPage() {
         <div className="bg-teal-600 text-white p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-2xl">🌱</span>
-            <h1 className="font-semibold">Saathi</h1>
+            <h1 className="font-semibold">Accessible Mental Health</h1>
           </div>
           <div className="flex items-center gap-2 text-sm">
             <span className="bg-teal-500 px-3 py-1 rounded-full text-xs">24/7</span>

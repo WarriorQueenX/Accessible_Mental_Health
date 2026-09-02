@@ -6,7 +6,7 @@ export default function ConsentScreen({ onConsent }) {
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
         <h2 className="text-lg font-semibold text-amber-800">⚠️ Important</h2>
         <p className="text-sm text-amber-700 mt-1">
-          Saathi aapki baatein sunta hai, lekin personal information nahi rakhta.
+          Accessible Mental Health aapki baatein sunta hai, lekin personal information nahi rakhta.
           Humne aapko pehchanne ke liye random ID di hai.
         </p>
         <p className="text-sm text-amber-700 mt-2">

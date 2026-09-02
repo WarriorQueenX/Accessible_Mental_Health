@@ -27,7 +27,7 @@ export default function WidgetView() {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🌱</span>
-          <span className="font-bold text-teal-700 text-sm">Saathi</span>
+          <span className="font-bold text-teal-700 text-sm">AMH</span>
         </div>
         <span className="text-xs text-gray-400 bg-white/50 px-2 py-1 rounded-full">24/7</span>
       </div>
@@ -88,7 +88,7 @@ export default function WidgetView() {
 
       {/* Footer */}
       <p className="text-[10px] text-gray-400 text-center mt-3">
-        Saathi • Your safe space • Anonymous & Free
+        AMH • Your safe space • Anonymous & Free
       </p>
     </div>
   );

@@ -24,7 +24,7 @@ export default function HomePage() {
       <div className="max-w-md w-full bg-white rounded-3xl shadow-xl p-8">
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">🌱</div>
-          <h1 className="text-3xl font-bold text-teal-700">Saathi</h1>
+          <h1 className="text-3xl font-bold text-teal-700">Accessible Mental Health</h1>
           <p className="text-gray-500 mt-1">Aapka apna mental health saathi</p>
         </div>
 
