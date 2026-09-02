@@ -1,0 +1,14 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+sqlalchemy>=2.0
+pydantic>=2.6
+
+# Acoustic feature extraction (works in MOCK_MODE too -- no model download)
+librosa>=0.10
+soundfile>=0.12
+numpy>=1.26
+
+# Real STT (only required when SAATHI_MOCK_MODE=0)
+torch>=2.2
+transformers>=4.39
